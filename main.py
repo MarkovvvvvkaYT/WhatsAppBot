@@ -82,7 +82,7 @@ def run_ping_server():
 def keep_alive():
     while True:
         try:
-            requests.get("https://your-service-name.onrender.com/ping", timeout=5)
+            requests.get("https://whatsappbot-qv2p.onrender.com/ping", timeout=5)
             print("Keep-alive ping sent")
         except Exception as e:
             print(f"Keep-alive error: {str(e)}")
