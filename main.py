@@ -1,15 +1,17 @@
+from gigachat.models import Image, Chat, Messages, MessagesRole
+from whatsapp_chatbot_python import GreenAPIBot, Notification
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import os, time, requests, json
 from dotenv import load_dotenv
-from whatsapp_chatbot_python import GreenAPIBot, Notification
+from bs4 import BeautifulSoup
+from gigachat import GigaChat
 from g4f.client import Client
+from threading import Thread
+from dateutil import tz
+import datetime
+import random
 import base64
 import ssl
-from gigachat import GigaChat
-from gigachat.models import Image, Chat, Messages, MessagesRole
-from bs4 import BeautifulSoup
-import random
-import datetime
-from dateutil import tz
 system_prompt = """
 Ты — типичный школьный одноклассник 12-13 лет. Общайся неформально, как в реальной жизни:
    - Отвечай коротко (1-2 предложения)
@@ -64,9 +66,38 @@ def send_file_by_upload(chat_id: str, file_path: str, caption: str = "") -> dict
         return response.json()
     else:
         return {"error": f"Ошибка {response.status_code}: {response.text}"}
+#ДОБАВЛЕНО_____________________________________________________________________________________________________________
+class PingHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/ping':
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"OK")
+
+def run_ping_server():
+    server = HTTPServer(('0.0.0.0', 8080), PingHandler)
+    print("Ping server started on port 8080")
+    server.serve_forever()
+
+def keep_alive():
+    while True:
+        try:
+            requests.get("https://your-service-name.onrender.com/ping", timeout=5)
+            print("Keep-alive ping sent")
+        except Exception as e:
+            print(f"Keep-alive error: {str(e)}")
+        time.sleep(300)
 
 def main():
-    print("Бот запущен. Для остановки Ctrl+C\n")
+
+    ping_thread = Thread(target=run_ping_server)
+    ping_thread.daemon = True
+    ping_thread.start()
+    
+    keepalive_thread = Thread(target=keep_alive)
+    keepalive_thread.daemon = True
+    keepalive_thread.start()
+#ДОБАВЛЕНО_____________________________________________________________________________________________________________
     @bot.router.message(command="help")
     def handle_help(notification: Notification):
         global kesha

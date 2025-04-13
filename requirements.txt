@@ -1,7 +1,7 @@
-whatsapp-chatbot-python==1.0.0
-python-dotenv==1.0.0
-requests==2.31.0
-g4f==0.2.1.1
-beautifulsoup4==4.12.2
-gigachat==0.1.9
-python-dateutil==2.8.2
+whatsapp-chatbot-python
+python-dotenv
+requests
+g4f
+beautifulsoup4
+gigachat
+python-dateutil
